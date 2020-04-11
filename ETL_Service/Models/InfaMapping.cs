@@ -37,6 +37,7 @@ namespace ETL_Service.Models
         public string TargetInstance { get; set; }
         public string TargetLoadorder { get; set; }
         public string Flag { get; set; }
+        public string XMLTag { get; set; }
         public DateTime? LoadTimestamp { get; set; }
         public DateTime? UpdatedTimestamp { get; set; }
         public string Status { get; set; }

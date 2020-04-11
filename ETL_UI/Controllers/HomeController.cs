@@ -152,6 +152,7 @@ namespace InfoMatica.Controllers
                         Mapping.MappingName = mappingName;
                         Mapping.MappingDescription = mapingdesc;
                         Mapping.MappingIsValid = isvalid;
+                        Mapping.XMLTag = transfermationField.Name.LocalName;
                         Mapping.TransName = transformation.Attribute("NAME").SetAttributeValue();
                         Mapping.TransType = transformation.Attribute("TYPE").SetAttributeValue();
                         Mapping.TransReusable = transformation.Attribute("REUSABLE").SetAttributeValue();
@@ -190,6 +191,22 @@ namespace InfoMatica.Controllers
                             Mapping.InstanceName = string.Empty;
                             Mapping.TableAttributeValue = string.Empty;
                         }
+                        Folder.MappingList.Add(Mapping);
+                    }
+                }
+
+                var instanceField = folder.Descendants("INSTANCE");
+                foreach (var instance in instanceField)
+                {
+                    if (instance.Name.LocalName == "INSTANCE")
+                    {
+                        Mapping Mapping = new Mapping();
+                        Mapping.MappingName = mappingName;
+                        Mapping.MappingDescription = mapingdesc;
+                        Mapping.XMLTag = instance.Name.LocalName;
+                        Mapping.MappingIsValid = isvalid;
+                        Mapping.InstanceName = instance.Attribute("NAME").SetAttributeValue();
+                        Mapping.InstanceType = instance.Attribute("TYPE").SetAttributeValue();
                         Folder.MappingList.Add(Mapping);
                     }
                 }

@@ -26,7 +26,7 @@ namespace ETL_Service.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=VisualStudio1;Database=ETLMigration;User Id=sa;Password=sa@123");
             }
         }
@@ -278,6 +278,12 @@ namespace ETL_Service.Models
                 entity.Property(e => e.Status)
                     .HasColumnName("STATUS")
                     .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.XMLTag)
+                    .HasColumnName("XML_TAG")
+                    .HasMaxLength(999)
                     .IsUnicode(false)
                     .IsFixedLength();
 

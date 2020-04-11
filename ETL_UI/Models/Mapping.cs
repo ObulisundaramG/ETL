@@ -28,5 +28,6 @@ namespace ETL_UI.Models
         public string SortDirection { get; set; }
         public string InstanceName { get; set; }
         public string InstanceType { get; set; }
+        public string XMLTag { get; set; }
     }
 }
