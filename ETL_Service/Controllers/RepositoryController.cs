@@ -13,17 +13,14 @@ namespace ETL_Service.Controllers
     [ApiController]
     public class RepositoryController : ControllerBase
     {
-        
         public RepositoryController()
         {
-           
-
         }
         public IActionResult Create([FromBody]List<InfomaticaModel> InfomaticaModel)
         {
             ETL_Service.Managers.RepositoryManager.Repository repo = new ETL_Service.Managers.RepositoryManager.Repository();
             string str = repo.CreateRepository(InfomaticaModel);
-            return Ok();
+            return Ok(str);
         }
     }
 }

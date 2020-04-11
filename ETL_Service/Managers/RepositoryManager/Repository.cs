@@ -16,6 +16,7 @@ namespace ETL_Service.Managers.RepositoryManager
             {
                 using (var dbContext = new ETLMigrationContext())
                 {
+                    #region Inserting into Repository
                     //Inserting into Repository folder
                     var repositoryValue = InfomaticaModelList.Select(x => x.Repository).FirstOrDefault();
                     var infaReposiotry = new InfaRepository
@@ -32,17 +33,13 @@ namespace ETL_Service.Managers.RepositoryManager
                     dbContext.InfaRepository.Add(infaReposiotry);
                     dbContext.SaveChanges();
                     var repositoryId = infaReposiotry.RepId;
-
-                    //Check if the work flow present in the folder
-                    //If not should now insert.
-                    var workFlow = InfomaticaModelList.Select(x => x.WorkFlow).FirstOrDefault();
-                    if (workFlow == null)
-                        return "";
-
-                    //Inserting into InfraFolder;
-                    var folderList = InfomaticaModelList.SelectMany(x => x.Folders).ToList();
-                    foreach (var folder in folderList)
+                    #endregion
+                    //Getting folder list
+                    var folders = InfomaticaModelList.SelectMany(x => x.Folders).ToList();
+                    foreach (var folder in folders)
                     {
+
+                        #region Inserting into folders
                         var infraFolder = new InfaFolder
                         {
                             RepId = repositoryId,
@@ -57,11 +54,11 @@ namespace ETL_Service.Managers.RepositoryManager
                         };
                         dbContext.InfaFolder.Add(infraFolder);
                         dbContext.SaveChanges();
-
                         var folderId = infraFolder.FldrId;
+                        #endregion
 
                         #region Inserting Workflow
-                        //var workFlow = InfomaticaModelList.Select(x => x.WorkFlow).FirstOrDefault();
+                        var workFlow = folder.WorkFlow;
                         var infraWorkFlow = new InfaWorkflow
                         {
                             FldrId = folderId,
@@ -76,13 +73,12 @@ namespace ETL_Service.Managers.RepositoryManager
                         };
                         dbContext.InfaWorkflow.Add(infraWorkFlow);
                         dbContext.SaveChanges();
-
                         var workFlowId = infraWorkFlow.WkfId;
 
                         #endregion
 
                         #region Inserting Session
-                        var session = InfomaticaModelList.Select(x => x.Session).FirstOrDefault();
+                        var session = folder.Session;
                         var infraSession = new InfaSession
                         {
                             WkfId = workFlowId,
@@ -102,9 +98,7 @@ namespace ETL_Service.Managers.RepositoryManager
                         #endregion
 
                         #region Inserting Mapping
-
-                        var mappingList = InfomaticaModelList.SelectMany(x => x.MappingList).ToList();
-
+                        var mappingList = folder.MappingList.ToList();
                         foreach (var mapping in mappingList)
                         {
                             var infaMapping = new InfaMapping
@@ -141,13 +135,30 @@ namespace ETL_Service.Managers.RepositoryManager
                             dbContext.InfaMapping.Add(infaMapping);
                             dbContext.SaveChanges();
                         }
-
                         #endregion
 
+                        #region Inserting connector
+                        var mappingId = dbContext.InfaMapping.OrderByDescending(x => x.MappingId).Select(x => x.MappingId).FirstOrDefault();
+                        var infaConnector = new InfaConnector
+                        {
+                            RepId = repositoryId,
+                            FldrId = folderId,
+                            WkfId = workFlowId,
+                            SessionId = sessionId,
+                            MappingId = mappingId,
+                            Status = "A",
+                            CreatedBy = "Infa",
+                            CreatedDate = DateTime.Now,
+                            ModifiedBy = "Infa",
+                            ModifiedDate = DateTime.Now
+                        };
+                        dbContext.InfaConnector.Add(infaConnector);
+                        dbContext.SaveChanges();
 
+                        #endregion
                     }
                 }
-                return "";
+                return "Successfully Inserted";
             }
             catch (Exception ex)
             {

@@ -12,5 +12,11 @@ namespace ETL_UI.Models
         public string FolderDescription { get; set; }
         public string Shared { get; set; }
         public string Owner { get; set; }
+        public WorkFlow WorkFlow { get; set; } = new WorkFlow();
+        public Session Session { get; set; } = new Session();
+        public List<Mapping> MappingList { get; set; } = new List<Mapping>();
+        public Connector Connector { get; set; } = new Connector();
+
+
     }
 }

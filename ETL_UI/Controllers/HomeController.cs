@@ -48,7 +48,6 @@ namespace InfoMatica.Controllers
                 InfomaticaModel infomatica = ConvertXmlToInformaticaMode(filename);
                 InfomaticaModelList.Add(infomatica);
             }
-
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -118,6 +117,9 @@ namespace InfoMatica.Controllers
                 WorkFlow wkFlow = new WorkFlow();
 
                 //Infomatica.WorkFlow = new WorkFlow();
+
+                
+
                 wkFlow.WorkFlowName = workFlowNode.Select(x => x.Attribute("NAME").SetAttributeValue()).FirstOrDefault();
                 wkFlow.WorkFlowDescription = workFlowNode.Select(x => x.Attribute("DESCRIPTION").SetAttributeValue()).FirstOrDefault();
                 wkFlow.WorkFlowColumn = "";
@@ -131,24 +133,12 @@ namespace InfoMatica.Controllers
                 sson.SessionDescription = sessionInformation.Select(X => X.Attribute("DESCRIPTION").SetAttributeValue()).FirstOrDefault();
                 sson.MappingName = sessionInformation.Select(X => X.Attribute("MAPPINGNAME").SetAttributeValue()).FirstOrDefault();
 
-                //Session sessionInfo = (from session in sessionInformation
-                //                       select new Session
-                //                       {
-                //                           SessionName = session.Attribute("NAME").SetAttributeValue(),
-                //                           SessionDescription = session.Attribute("DESCRIPTION").SetAttributeValue(),
-                //                           MappingName = session.Attribute("MAPPINGNAME").SetAttributeValue()
-                //                       }).FirstOrDefault();
-
-                ////Adding to model
-                //Infomatica.Session = sessionInfo;
-
                 //Step 5 : Get mapping information
                 var mappingNode = folder.Descendants("MAPPING");
 
                 string mappingName = mappingNode.Select(x => x.Attribute("NAME").Value).FirstOrDefault();
                 string mapingdesc = mappingNode.Select(x => x.Attribute("DESCRIPTION").Value).FirstOrDefault();
                 string isvalid = mappingNode.Select(x => x.Attribute("ISVALID").Value).FirstOrDefault();
-
 
                 var transformationInformation = folder.Descendants("TRANSFORMATION");
 
@@ -200,13 +190,11 @@ namespace InfoMatica.Controllers
                             Mapping.InstanceName = string.Empty;
                             Mapping.TableAttributeValue = string.Empty;
                         }
-                        Infomatica.MappingList.Add(Mapping);
-
+                        Folder.MappingList.Add(Mapping);
                     }
                 }
-                Infomatica.WorkFlow = wkFlow;
-                Infomatica.Session = sson;
-
+                Folder.WorkFlow = wkFlow;
+                Folder.Session = sson;
             }
             return Infomatica;
         }
