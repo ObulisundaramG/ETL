@@ -37,17 +37,19 @@ namespace InfoMatica.Controllers
             List<InfomaticaModel> InfomaticaModelList = new List<InfomaticaModel>();
             foreach (string fileNameFromDirectory in Directory.EnumerateFiles(@"C:\ETL_Projects\FileFolder", "*.xml"))
             {
-                
-                string filename = GetUniqueFileName(fileNameFromDirectory);
-                string SavePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/XML", filename);
-                using (var stream = new FileStream(SavePath, FileMode.Create))
-                {
-
-                    file.CopyTo(stream);
-                }
-                InfomaticaModel infomatica = ConvertXmlToInformaticaMode(filename);
+                string contents = System.IO.File.ReadAllText(fileNameFromDirectory);
+                //string filename = GetUniqueFileName(fileNameFromDirectory);
+                InfomaticaModel infomatica = ConvertXmlToInformaticaMode(contents);
                 InfomaticaModelList.Add(infomatica);
             }
+            string response = await InsertIntoDb(InfomaticaModelList);
+            ViewBag.Message = "File successfully uploaded";
+            DataTable dt = new DataTable();
+            return View(dt);
+        }
+        public async Task<string> InsertIntoDb(List<InfomaticaModel> InfomaticaModelList)
+        {
+            string result = string.Empty;
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -57,28 +59,18 @@ namespace InfoMatica.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string data = await response.Content.ReadAsStringAsync();
+                    result = await response.Content.ReadAsStringAsync();
                     //product = JsonConvert.DeserializeObject<Product>(data);
                 }
-
             }
-
-            ViewBag.Message = "File successfully uploaded";
-            DataTable dt = new DataTable();
-
-            return View(dt);
+            return result;
         }
-
         public InfomaticaModel ConvertXmlToInformaticaMode(string fileName)
         {
             //Initialize Model
             InfomaticaModel Infomatica = new InfomaticaModel();
-
-            string SavePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/XML", fileName);
-            XDocument xdoc = XDocument.Load(SavePath);
-
+            XDocument xdoc = XDocument.Parse(fileName);
             var repositorys = xdoc.Descendants("REPOSITORY");
-
             if (repositorys == null) return new InfomaticaModel();
 
             //Step 1 : Get Repository Details.
@@ -118,7 +110,7 @@ namespace InfoMatica.Controllers
 
                 //Infomatica.WorkFlow = new WorkFlow();
 
-                
+
 
                 wkFlow.WorkFlowName = workFlowNode.Select(x => x.Attribute("NAME").SetAttributeValue()).FirstOrDefault();
                 wkFlow.WorkFlowDescription = workFlowNode.Select(x => x.Attribute("DESCRIPTION").SetAttributeValue()).FirstOrDefault();
@@ -156,10 +148,6 @@ namespace InfoMatica.Controllers
                         Mapping.TransName = transformation.Attribute("NAME").SetAttributeValue();
                         Mapping.TransType = transformation.Attribute("TYPE").SetAttributeValue();
                         Mapping.TransReusable = transformation.Attribute("REUSABLE").SetAttributeValue();
-                        if (transfermationField.Attribute("NAME").Value == "DEPARTMENT_CODE")
-                        {
-
-                        }
                         Mapping.FieldName = transfermationField.Attribute("NAME").SetAttributeValue();
                         Mapping.FieldDescription = transfermationField.Attribute("DESCRIPTION").SetAttributeValue();
                         Mapping.DataType = transfermationField.Attribute("DATATYPE").SetAttributeValue();

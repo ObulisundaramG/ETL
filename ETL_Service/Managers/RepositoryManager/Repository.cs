@@ -156,72 +156,107 @@ namespace ETL_Service.Managers.RepositoryManager
 
                         foreach (var mapping in mappingList)
                         {
-                            var existingMapping = dbContext.InfaMapping.Where(x => x.MappingName == mapping.MappingName).FirstOrDefault();
+                            var infaMapping = new InfaMapping
+                            {
+                                SessionId = sessionId,
+                                FldrId = folderId,
+                                MappingName = mapping.MappingName,
+                                MappingDesc = mapping.MappingDescription,
+                                MappingIsvalid = mapping.MappingIsValid,
+                                TransType = mapping.TransType,
+                                TransName = mapping.TransName,
+                                TransReusable = mapping.TransReusable,
+                                FieldName = mapping.FieldName,
+                                FieldDesc = mapping.FieldDescription,
+                                Datatype = mapping.DataType,
+                                Porttype = mapping.PortType,
+                                Precision = mapping.Prescision,
+                                Scale = mapping.Scale,
+                                Expression = mapping.Expression,
+                                ExpressionType = mapping.ExpressionType,
+                                TableattributeName = mapping.TableAttributeName,
+                                TableattributeValue = mapping.TableAttributeValue,
+                                SortKey = mapping.SortKey,
+                                SortDirection = mapping.SortDirection,
+                                InstanceName = mapping.InstanceName,
+                                InstanceType = mapping.InstanceType,
+                                XMLTag = mapping.XMLTag,
+                                LoadTimestamp = DateTime.Now,
+                                Status = "A",
+                                CreatedBy = "Infra",
+                                CreatedDate = DateTime.Now,
+                                ModifiedBy = "Infra",
+                                ModifiedDate = DateTime.Now
+                            };
+                            dbContext.InfaMapping.Add(infaMapping);
+                            dbContext.SaveChanges();
 
-                            if (existingMapping == null)
-                            {
-                                var infaMapping = new InfaMapping
-                                {
-                                    SessionId = sessionId,
-                                    FldrId = folderId,
-                                    MappingName = mapping.MappingName,
-                                    MappingDesc = mapping.MappingDescription,
-                                    MappingIsvalid = mapping.MappingIsValid,
-                                    TransType = mapping.TransType,
-                                    TransName = mapping.TransName,
-                                    TransReusable = mapping.TransReusable,
-                                    FieldName = mapping.FieldName,
-                                    FieldDesc = mapping.FieldDescription,
-                                    Datatype = mapping.DataType,
-                                    Porttype = mapping.PortType,
-                                    Precision = mapping.Prescision,
-                                    Scale = mapping.Scale,
-                                    Expression = mapping.Expression,
-                                    ExpressionType = mapping.ExpressionType,
-                                    TableattributeName = mapping.TableAttributeName,
-                                    TableattributeValue = mapping.TableAttributeValue,
-                                    SortKey = mapping.SortKey,
-                                    SortDirection = mapping.SortDirection,
-                                    InstanceName = mapping.InstanceName,
-                                    InstanceType = mapping.InstanceType,
-                                    XMLTag = mapping.XMLTag,
-                                    LoadTimestamp = DateTime.Now,
-                                    Status = "A",
-                                    CreatedBy = "Infra",
-                                    CreatedDate = DateTime.Now,
-                                    ModifiedBy = "Infra",
-                                    ModifiedDate = DateTime.Now
-                                };
-                                dbContext.InfaMapping.Add(infaMapping);
-                                dbContext.SaveChanges();
-                            }
-                            else
-                            {
-                                existingMapping.MappingName = mapping.MappingName;
-                                existingMapping.MappingDesc = mapping.MappingDescription;
-                                existingMapping.MappingIsvalid = mapping.MappingIsValid;
-                                existingMapping.TransType = mapping.TransType;
-                                existingMapping.TransName = mapping.TransName;
-                                existingMapping.TransReusable = mapping.TransReusable;
-                                existingMapping.FieldName = mapping.FieldName;
-                                existingMapping.FieldDesc = mapping.FieldDescription;
-                                existingMapping.Datatype = mapping.DataType;
-                                existingMapping.Porttype = mapping.PortType;
-                                existingMapping.Precision = mapping.Prescision;
-                                existingMapping.Scale = mapping.Scale;
-                                existingMapping.Expression = mapping.Expression;
-                                existingMapping.ExpressionType = mapping.ExpressionType;
-                                existingMapping.TableattributeName = mapping.TableAttributeName;
-                                existingMapping.TableattributeValue = mapping.TableAttributeValue;
-                                existingMapping.SortKey = mapping.SortKey;
-                                existingMapping.SortDirection = mapping.SortDirection;
-                                existingMapping.InstanceName = mapping.InstanceName;
-                                existingMapping.InstanceType = mapping.InstanceType;
-                                existingMapping.XMLTag = mapping.XMLTag;
-                                existingMapping.ModifiedBy = "Infra";
-                                existingMapping.ModifiedDate = DateTime.Now;
-                                dbContext.SaveChanges();
-                            }
+                            //var existingMapping = dbContext.InfaMapping.FirstOrDefault(x => x.FieldName == mapping.FieldDescription);
+                            ////var existingMapping = null;
+                            //if (existingMapping == null)
+                            //{
+                            //    var infaMapping = new InfaMapping
+                            //    {
+                            //        SessionId = sessionId,
+                            //        FldrId = folderId,
+                            //        MappingName = mapping.MappingName,
+                            //        MappingDesc = mapping.MappingDescription,
+                            //        MappingIsvalid = mapping.MappingIsValid,
+                            //        TransType = mapping.TransType,
+                            //        TransName = mapping.TransName,
+                            //        TransReusable = mapping.TransReusable,
+                            //        FieldName = mapping.FieldName,
+                            //        FieldDesc = mapping.FieldDescription,
+                            //        Datatype = mapping.DataType,
+                            //        Porttype = mapping.PortType,
+                            //        Precision = mapping.Prescision,
+                            //        Scale = mapping.Scale,
+                            //        Expression = mapping.Expression,
+                            //        ExpressionType = mapping.ExpressionType,
+                            //        TableattributeName = mapping.TableAttributeName,
+                            //        TableattributeValue = mapping.TableAttributeValue,
+                            //        SortKey = mapping.SortKey,
+                            //        SortDirection = mapping.SortDirection,
+                            //        InstanceName = mapping.InstanceName,
+                            //        InstanceType = mapping.InstanceType,
+                            //        XMLTag = mapping.XMLTag,
+                            //        LoadTimestamp = DateTime.Now,
+                            //        Status = "A",
+                            //        CreatedBy = "Infra",
+                            //        CreatedDate = DateTime.Now,
+                            //        ModifiedBy = "Infra",
+                            //        ModifiedDate = DateTime.Now
+                            //    };
+                            //    dbContext.InfaMapping.Add(infaMapping);
+                            //    dbContext.SaveChanges();
+                            //}
+                            //else
+                            //{
+                            //    existingMapping.MappingName = mapping.MappingName;
+                            //    existingMapping.MappingDesc = mapping.MappingDescription;
+                            //    existingMapping.MappingIsvalid = mapping.MappingIsValid;
+                            //    existingMapping.TransType = mapping.TransType;
+                            //    existingMapping.TransName = mapping.TransName;
+                            //    existingMapping.TransReusable = mapping.TransReusable;
+                            //    existingMapping.FieldName = mapping.FieldName;
+                            //    existingMapping.FieldDesc = mapping.FieldDescription;
+                            //    existingMapping.Datatype = mapping.DataType;
+                            //    existingMapping.Porttype = mapping.PortType;
+                            //    existingMapping.Precision = mapping.Prescision;
+                            //    existingMapping.Scale = mapping.Scale;
+                            //    existingMapping.Expression = mapping.Expression;
+                            //    existingMapping.ExpressionType = mapping.ExpressionType;
+                            //    existingMapping.TableattributeName = mapping.TableAttributeName;
+                            //    existingMapping.TableattributeValue = mapping.TableAttributeValue;
+                            //    existingMapping.SortKey = mapping.SortKey;
+                            //    existingMapping.SortDirection = mapping.SortDirection;
+                            //    existingMapping.InstanceName = mapping.InstanceName;
+                            //    existingMapping.InstanceType = mapping.InstanceType;
+                            //    existingMapping.XMLTag = mapping.XMLTag;
+                            //    existingMapping.ModifiedBy = "Infra";
+                            //    existingMapping.ModifiedDate = DateTime.Now;
+                            //    dbContext.SaveChanges();
+                            //}
                         }
                         #endregion
 
