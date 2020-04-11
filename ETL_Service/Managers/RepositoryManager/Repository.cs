@@ -52,9 +52,7 @@ namespace ETL_Service.Managers.RepositoryManager
                     var folders = InfomaticaModelList.SelectMany(x => x.Folders).ToList();
                     foreach (var folder in folders)
                     {
-
                         #region Inserting into folders
-
                         var existingFolder = dbContext.InfaFolder.Where(x => x.FldrName == folder.FolderName && x.FldrDesc == folder.FolderDescription).FirstOrDefault();
                         int folderId = 0;
                         if (existingFolder == null)
@@ -222,6 +220,7 @@ namespace ETL_Service.Managers.RepositoryManager
                                 existingMapping.XMLTag = mapping.XMLTag;
                                 existingMapping.ModifiedBy = "Infra";
                                 existingMapping.ModifiedDate = DateTime.Now;
+                                dbContext.SaveChanges();
                             }
                         }
                         #endregion
