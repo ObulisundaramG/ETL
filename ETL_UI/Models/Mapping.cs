@@ -8,6 +8,8 @@ namespace ETL_UI.Models
     public class Mapping
     {
         public int Id { get; set; }
+        public int FolderId { get; set; }
+        public int SessionId { get; set; }
         public string MappingName { get; set; }
         public string MappingDescription { get; set; }
         public string MappingIsValid { get; set; }

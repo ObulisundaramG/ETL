@@ -8,6 +8,6 @@ namespace ETL_Service.Managers.IRepositoryManager
 {
     public interface IRepository
     {
-        string CreateRepository(List<InfomaticaModel> InfomaticaModelList);
+        Task<string> CreateRepository(List<InfomaticaModel> InfomaticaModelList);
     }
 }

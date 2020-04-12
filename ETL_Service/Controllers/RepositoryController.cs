@@ -16,10 +16,10 @@ namespace ETL_Service.Controllers
         public RepositoryController()
         {
         }
-        public IActionResult Create([FromBody]List<InfomaticaModel> InfomaticaModel)
+        public async Task<IActionResult> Create([FromBody]List<InfomaticaModel> InfomaticaModel)
         {
             ETL_Service.Managers.RepositoryManager.Repository repo = new ETL_Service.Managers.RepositoryManager.Repository();
-            string str = repo.CreateRepository(InfomaticaModel);
+            string str = await repo.CreateRepository(InfomaticaModel);
             return Ok(str);
         }
     }

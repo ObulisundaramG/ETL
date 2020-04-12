@@ -103,21 +103,11 @@ namespace InfoMatica.Controllers
                 //Step 3 : Get workflow 
 
                 //var workFlowNode = folder.Descendants("WORKFLOW");
-
-
-
                 WorkFlow wkFlow = new WorkFlow();
-
                 //Infomatica.WorkFlow = new WorkFlow();
-
-
-
                 wkFlow.WorkFlowName = workFlowNode.Select(x => x.Attribute("NAME").SetAttributeValue()).FirstOrDefault();
                 wkFlow.WorkFlowDescription = workFlowNode.Select(x => x.Attribute("DESCRIPTION").SetAttributeValue()).FirstOrDefault();
                 wkFlow.WorkFlowColumn = "";
-
-
-
                 //Step 4 : Get session inormation
                 var sessionInformation = workFlowNode.Descendants("SESSION");
                 Session sson = new Session();
