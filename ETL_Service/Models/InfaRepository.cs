@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ETL_Service.Models
 {
@@ -10,7 +11,7 @@ namespace ETL_Service.Models
             InfaConnector = new HashSet<InfaConnector>();
             InfaFolder = new HashSet<InfaFolder>();
         }
-
+        [Key]
         public int RepId { get; set; }
         public string RepName { get; set; }
         public string RepDesc { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ETL_Service.Models
 {
@@ -12,6 +13,7 @@ namespace ETL_Service.Models
             InfaWorkflow = new HashSet<InfaWorkflow>();
         }
 
+        [Key]
         public int FldrId { get; set; }
         public int? RepId { get; set; }
         public string FldrName { get; set; }

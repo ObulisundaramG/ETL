@@ -83,15 +83,13 @@ namespace InfoMatica.Controllers
                                      }).FirstOrDefault();
 
             //Step 2 : Get Folder Informations
-
-
             var folders = xdoc.Descendants("FOLDER");
-
 
             if (folders == null) return new InfomaticaModel();
             foreach (var folder in folders)
             {
                 var workFlowNode = folder.Descendants("WORKFLOW");
+
                 if (workFlowNode.Count() <= 0) break;
 
                 Folder Folder = new Folder();
@@ -115,6 +113,32 @@ namespace InfoMatica.Controllers
                 sson.SessionDescription = sessionInformation.Select(X => X.Attribute("DESCRIPTION").SetAttributeValue()).FirstOrDefault();
                 sson.MappingName = sessionInformation.Select(X => X.Attribute("MAPPINGNAME").SetAttributeValue()).FirstOrDefault();
 
+                Folder.WorkFlow = wkFlow;
+                Folder.Session = sson;
+
+                //Get Session Config
+                var sessionConfigInformation = folder.Descendants("CONFIG");
+                foreach (var config in sessionConfigInformation)
+                {
+                    SessionConfigModel configModel = new SessionConfigModel();
+                    configModel.SessionName = sson.SessionName;
+                    configModel.XMLTag = config.Name.LocalName;
+                    configModel.ConfigAttributeName = config.Attribute("NAME").SetAttributeValue();
+                    configModel.ConfigAttributeDescValue = config.Attribute("VALUE").SetAttributeValue();
+                    configModel.IsDefault = config.Attribute("ISDEFAULT").SetAttributeValue();
+                    Folder.SessoinConfigList.Add(configModel);
+                    var configElements = config.Elements();
+                    foreach (var elm in configElements)
+                    {
+                        SessionConfigModel configModelElm = new SessionConfigModel();
+                        configModelElm.SessionName = sson.SessionName;
+                        configModelElm.XMLTag = config.Name.LocalName;
+                        configModelElm.ConfigAttributeName = elm.Attribute("NAME").SetAttributeValue();
+                        configModelElm.ConfigAttributeDescValue = elm.Attribute("VALUE").SetAttributeValue();
+                        configModelElm.IsDefault = elm.Attribute("ISDEFAULT").SetAttributeValue();
+                        Folder.SessoinConfigList.Add(configModelElm);
+                    }
+                }
                 //Step 5 : Get mapping information
                 var mappingNode = folder.Descendants("MAPPING");
 
@@ -188,8 +212,23 @@ namespace InfoMatica.Controllers
                         Folder.MappingList.Add(Mapping);
                     }
                 }
-                Folder.WorkFlow = wkFlow;
-                Folder.Session = sson;
+                var connectorField = folder.Descendants("CONNECTOR");
+                foreach (var conect in connectorField)
+                {
+                    if (conect.Name.LocalName == "CONNECTOR")
+                    {
+                        Connector connector = new Connector();
+                        connector.FromField = conect.Attribute("FROMFIELD").SetAttributeValue();
+                        connector.XmlTag = conect.Name.LocalName;
+                        connector.FromInstance = conect.Attribute("FROMINSTANCETYPE").SetAttributeValue();
+                        connector.ToField = conect.Attribute("TOFIELD").SetAttributeValue();
+                        connector.ToInstance = conect.Attribute("TOINSTANCE").SetAttributeValue();
+                        connector.ToInstanceType = conect.Attribute("TOINSTANCETYPE").SetAttributeValue();
+                        Folder.ConnectorList.Add(connector);
+                        //Folder.MappingList.Add(Mapping);
+                    }
+                }
+                
             }
             return Infomatica;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ETL_Service.Models
 {
@@ -11,6 +12,7 @@ namespace ETL_Service.Models
             InfaMapping = new HashSet<InfaMapping>();
         }
 
+        [Key]
         public int SessionId { get; set; }
         public int? WkfId { get; set; }
         public string SessionName { get; set; }

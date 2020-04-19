@@ -151,10 +151,33 @@ namespace ETL_Service.Managers.RepositoryManager
 
                         #endregion
 
+                        #region Insertin Session Config
+                        var sessionConfig = folder.SessoinConfigList.ToList();
+                        var existingConfigSession = dbContext.InfaSessionConfig.Where(x => x.WorkFlowId == workFlowId && x.SessionId == sessionId).FirstOrDefault();
+                        if (existingConfigSession == null)
+                        {
+                            foreach (var item in sessionConfig)
+                            {
+                                var sessionConfigModel = new InfaSessionConfig
+                                {
+                                    WorkFlowId = workFlowId,
+                                    SessionId = sessionId,
+                                    ConfigAttributeName = item.ConfigAttributeName,
+                                    ConfigAttributeDescValue = item.ConfigAttributeDescValue,
+                                    IsDefault = item.IsDefault,
+                                    SessionName = item.SessionName,
+                                    XMLTag = item.XMLTag
+                                };
+                                dbContext.InfaSessionConfig.Add(sessionConfigModel);
+                                await dbContext.SaveChangesAsync();
+                            }
+                        }
+                        #endregion
+
                         #region Inserting Mapping
 
                         var existingMappingList = dbContext.InfaMapping.Where(x => x.FldrId == folderId).ToList();
-
+                        var connector = folder.ConnectorList;
                         if (existingMappingList.Count <= 0)
                         {
                             var mappingList = folder.MappingList.ToList();
@@ -195,6 +218,38 @@ namespace ETL_Service.Managers.RepositoryManager
                                 };
                                 dbContext.InfaMapping.Add(infaMapping);
                                 await dbContext.SaveChangesAsync();
+
+                                var lastInsertedMappingId = infaMapping.MappingId;
+                                #region Inserting into connector
+
+                                foreach (var contor in connector.Where(x => x.IsExecuted == false))
+                                {
+                                    var existingConnector = dbContext.InfaConnector.FirstOrDefault(x => x.SessionId == sessionId && x.MappingId == lastInsertedMappingId);
+                                    if (existingConnector == null)
+                                    {
+                                        var infaConnector = new InfaConnector
+                                        {
+                                            MappingId = lastInsertedMappingId,
+                                            SessionId = sessionId,
+                                            XmlTag = contor.XmlTag,
+                                            FromField = contor.FromField,
+                                            FromInstance = contor.FromInstance,
+                                            FromInstanceType = contor.FromInstanceType,
+                                            ToField = contor.ToField,
+                                            ToInstance = contor.ToInstance,
+                                            ToInstanceType = contor.ToInstanceType,
+                                            Status = "A",
+                                            CreatedBy = "Infa",
+                                            CreatedDate = DateTime.Now,
+                                            ModifiedBy = "Infa",
+                                            ModifiedDate = DateTime.Now
+                                        };
+                                        dbContext.InfaConnector.Add(infaConnector);
+                                        await dbContext.SaveChangesAsync();
+                                        contor.IsExecuted = true;
+                                    }
+                                }
+                                #endregion
                             }
                         }
                         else
@@ -230,29 +285,6 @@ namespace ETL_Service.Managers.RepositoryManager
                         }
                         #endregion
 
-                        #region Inserting connector
-                        var mappingId = dbContext.InfaMapping.OrderByDescending(x => x.MappingId).Select(x => x.MappingId).FirstOrDefault();
-                        var existingConnector = dbContext.InfaConnector.FirstOrDefault(x => x.FldrId == folderId && x.RepId == repositoryId);
-
-                        if (existingConnector == null)
-                        {
-                            var infaConnector = new InfaConnector
-                            {
-                                RepId = repositoryId,
-                                FldrId = folderId,
-                                WkfId = workFlowId,
-                                SessionId = sessionId,
-                                MappingId = mappingId,
-                                Status = "A",
-                                CreatedBy = "Infa",
-                                CreatedDate = DateTime.Now,
-                                ModifiedBy = "Infa",
-                                ModifiedDate = DateTime.Now
-                            };
-                            dbContext.InfaConnector.Add(infaConnector);
-                            await dbContext.SaveChangesAsync();
-                        }
-                        #endregion
                     }
                 }
                 return "Successfully Inserted";
